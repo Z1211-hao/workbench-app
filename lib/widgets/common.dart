@@ -127,7 +127,7 @@ class AppButton extends StatelessWidget {
           decoration: BoxDecoration(gradient: pal.gradient, borderRadius: BorderRadius.circular(999), boxShadow: [
             BoxShadow(color: pal.gradEnd.withOpacity(.35), blurRadius: 10, offset: const Offset(0, 4)),
           ]),
-          child: Text(text, style: const TextStyle(fontSize: small ? 12 : 13.5, fontWeight: FontWeight.w800, color: Colors.white)),
+          child: Text(text, style: TextStyle(fontSize: small ? 12 : 13.5, fontWeight: FontWeight.w800, color: Colors.white)),
         ),
       ),
     );

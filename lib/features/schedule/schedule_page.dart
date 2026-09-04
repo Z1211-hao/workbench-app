@@ -196,7 +196,7 @@ class _SchedulePageState extends State<SchedulePage> {
   Widget _courseCell(Course? c, int node, Set<String> conflictedIds) {
     if (c == null) return const SizedBox(height: 40);
     final isStart = node == c.startNode;
-    final colors = coursePalette[c.colorIndex % coursePalette.length];
+    final colors = coursePalette[c.colorIndex % coursePalette.length].map(Color.new).toList();
     final textColor = coursePaletteText[c.colorIndex % coursePaletteText.length];
     final conflicted = conflictedIds.contains(c.id);
 
@@ -248,7 +248,7 @@ class _SchedulePageState extends State<SchedulePage> {
               child: Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: coursePalette[c.colorIndex % coursePalette.length]),
+                  gradient: LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: coursePalette[c.colorIndex % coursePalette.length].map(Color.new).toList()),
                   borderRadius: BorderRadius.circular(13),
                 ),
                 child: Row(
