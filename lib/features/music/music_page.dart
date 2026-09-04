@@ -183,7 +183,7 @@ class _MusicPageState extends State<MusicPage> {
                     thumbColor: pal.primary,
                   ),
                   child: Slider(
-                    value: _pos.inMilliseconds.toDouble().clamp(0, _dur.inMilliseconds.toDouble()),
+                    value: _pos.inMilliseconds.toDouble().clamp(0, _dur.inMilliseconds.toDouble()).toDouble(),
                     max: _dur.inMilliseconds.toDouble() > 0 ? _dur.inMilliseconds.toDouble() : 1,
                     onChanged: (v) => _player.seek(Duration(milliseconds: v.round())),
                   ),
