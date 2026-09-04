@@ -427,7 +427,7 @@ void shareCardToChat(BuildContext context, String kind, Map<String, dynamic> pay
   tipSnackBar(context, '已分享给 TA，去聊天看看吧 💬');
 }
 
-/// 模块页框架：顶部返回栏 + 内容区（首页「应用中心」push 的二级页面用）
+/// 模块页框架：顶部返回栏 + 内容区（侧边栏导航的二级模块页用）
 class ModuleScaffold extends StatelessWidget {
   final String title;
   final Widget child;

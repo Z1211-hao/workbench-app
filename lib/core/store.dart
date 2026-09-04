@@ -54,7 +54,7 @@ class AppStore extends ChangeNotifier {
   String _quoteSwapDate = '';
 
   int chatUnread = 0;
-  int currentTab = 0; // 0 桌面 1 待办 2 记账 3 课表 4 倒数日 5 食谱 6 聊天 7 我的
+  int currentTab = 0; // 0 桌面 1 待办 2 记账 3 课表 4 倒数日 5 食谱 6 聊天 7 我的 8 身高体重 9 番茄钟 10 背单词 11 运动打卡 12 识热量 13 小游戏 14 音乐
 
   // 环信账号（本机持久化；不进导出备份，避免两台设备互相覆盖登录身份）
   String chatMyId = '';

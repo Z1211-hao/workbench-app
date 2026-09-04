@@ -6,15 +6,22 @@ import '../core/theme.dart';
 import 'account/account_page.dart';
 import 'chat/chat_page.dart';
 import 'countdown/countdown_page.dart';
+import 'games/games_page.dart';
+import 'health/health_page.dart';
 import 'home/home_page.dart';
+import 'music/music_page.dart';
+import 'pomodoro/pomodoro_page.dart';
 import 'profile/profile_page.dart';
+import 'recipe/food_scan_page.dart';
 import 'recipe/recipe_page.dart';
 import 'schedule/schedule_page.dart';
 import 'todo/todo_page.dart';
 import 'welcome/welcome_page.dart';
+import 'words/words_page.dart';
+import 'workout/workout_page.dart';
 
-const _navEmojis = ['🏠', '📋', '💰', '📚', '⏳', '🍳', '💬', '🎀'];
-const _navLabels = ['桌面', '待办', '记账', '课表', '倒数日', '食谱', '聊天', '我的'];
+const _navEmojis = ['🏠', '📋', '💰', '📚', '⏳', '🍳', '💬', '🎀', '📏', '🍅', '📖', '💪', '🍽️', '🎮', '🎵'];
+const _navLabels = ['桌面', '待办', '记账', '课表', '倒数日', '食谱', '聊天', '我的', '身高体重', '番茄钟', '背单词', '运动打卡', '识热量', '小游戏', '音乐'];
 
 /// 根路由：欢迎页 ⇄ 工作台（0.3s 淡出右滑动效，见 PRD 3.1）
 class RootGate extends StatelessWidget {
@@ -56,10 +63,12 @@ class ShellPage extends StatelessWidget {
             color: Colors.white,
             child: SafeArea(
               right: false,
-              child: Column(
+              child: ListView(
+                padding: const EdgeInsets.symmetric(vertical: 6),
                 children: [
                   for (var i = 0; i < _navEmojis.length; i++)
-                    Expanded(
+                    SizedBox(
+                      height: 62,
                       child: _NavItem(
                         emoji: _navEmojis[i],
                         label: _navLabels[i],
@@ -85,6 +94,13 @@ class ShellPage extends StatelessWidget {
                 RecipePage(),
                 ChatPage(),
                 ProfilePage(),
+                HealthPage(),
+                PomodoroPage(),
+                WordsPage(),
+                WorkoutPage(),
+                FoodScanPage(),
+                GamesPage(),
+                MusicPage(),
               ],
             ),
           ),
