@@ -1,0 +1,24 @@
+name: workbench_app
+description: "小窝工作台：两个人一起用的生活管理工作台（记账 / 待办 / 课表 / 倒数日 / 食谱 / 聊天）"
+publish_to: "none"
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  provider: ^6.1.2
+  shared_preferences: ^2.2.3
+  im_flutter_sdk: ^4.22.0 # 环信 IM：聊天模块真实互通（仅 Android / iOS）
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/mascot.jpg
