@@ -332,7 +332,6 @@ class _HealthSheetState extends State<_HealthSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final pal = context.watch<AppStore>().palette;
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: SheetWrap(

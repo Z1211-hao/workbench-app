@@ -35,9 +35,11 @@ jobs:
 
       - name: Build release APK
         run: |
-          set -o pipefail
-          flutter build apk --release 2>&1 | tee /tmp/build.log | tail -120
-          if [ -f /tmp/build.log ]; then cp /tmp/build.log build.log; fi
+          set +e
+          flutter build apk --release > build.log 2>&1
+          code=$?
+          tail -120 build.log
+          exit $code
 
       - name: Upload build log
         if: failure()

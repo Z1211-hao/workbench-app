@@ -548,8 +548,8 @@ class WorkoutRecord {
 
 class WordItem {
   final String word;
-  String phonetic;
-  String meaning;
+  final String phonetic;
+  final String meaning;
 
   const WordItem(this.word, this.phonetic, this.meaning);
 

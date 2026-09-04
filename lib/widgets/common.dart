@@ -437,7 +437,6 @@ class ModuleScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pal = context.watch<AppStore>().palette;
     return Scaffold(
       backgroundColor: AppColors.bg,
       floatingActionButton: floatingAction,

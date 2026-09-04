@@ -10,6 +10,12 @@ build/
 .vscode/
 *.lock
 
+# 平台壳工程由 flutter create 生成（见 README 运行方式），不入库
+android/
+ios/
+.metadata
+test/
+
 # macOS
 .DS_Store
 

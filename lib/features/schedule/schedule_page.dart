@@ -311,7 +311,6 @@ class _SchedulePageState extends State<SchedulePage> {
 
   void _openCourseDetail(Course c) {
     final store = context.read<AppStore>();
-    final pal = store.palette;
     final parityText = ['每周', '单周', '双周'][c.parity];
     final wdText = c.weekdays.map(weekCn).map((s) => '周$s').join('、');
 

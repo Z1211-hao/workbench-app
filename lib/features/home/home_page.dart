@@ -240,7 +240,6 @@ class _CheckinCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final store = context.watch<AppStore>();
-    final pal = store.palette;
     final items = store.checkinItems;
     final doneCount = items.where(store.isDoneToday).length;
 
@@ -327,7 +326,6 @@ class _OverviewCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final store = context.watch<AppStore>();
-    final pal = store.palette;
 
     final todoCount = store.todayUndoneTodos.length;
     final courseCount = store.todayCourses.length;

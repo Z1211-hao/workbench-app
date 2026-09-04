@@ -82,7 +82,6 @@ class _WordsPageState extends State<WordsPage> {
     final mastered = store.wordMasteredCount;
     final total = store.wordTotalCount;
     final current = todayList.isNotEmpty ? todayList.first : null;
-    final goalReached = doneToday >= goal && todayList.isEmpty;
 
     return ModuleScaffold(
       title: '📖 背单词',
@@ -114,9 +113,9 @@ class _WordsPageState extends State<WordsPage> {
                         const SizedBox(height: 10),
                         const Text('🎉', style: TextStyle(fontSize: 40)),
                         const SizedBox(height: 10),
-                        const Text(
+                        Text(
                           doneToday >= goal ? '今日目标达成，明天再来看新词吧！' : '词库里的词都掌握啦，去加点新词吧！',
-                          style: TextStyle(fontSize: 13, color: AppColors.sub),
+                          style: const TextStyle(fontSize: 13, color: AppColors.sub),
                         ),
                         const SizedBox(height: 12),
                         AppButton('加新词', ghost: true, onTap: _openAddWord),
@@ -136,7 +135,7 @@ class _WordsPageState extends State<WordsPage> {
                             width: double.infinity,
                             padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 16),
                             decoration: BoxDecoration(
-                              gradient: pal.softBg,
+                              color: pal.softBg,
                               borderRadius: BorderRadius.circular(18),
                               border: Border.all(color: pal.softBorder),
                             ),
