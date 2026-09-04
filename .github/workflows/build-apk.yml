@@ -30,6 +30,7 @@ jobs:
       - name: Generate Android shell & fetch deps
         run: |
           flutter create . --platforms android --project-name workbench_app --no-pub
+          python3 tools/setup_android.py
           flutter pub get
 
       - name: Build release APK

@@ -1,0 +1,54 @@
+"""flutter create 生成 android 壳后调用（GitHub Actions 里执行）：
+1) 关闭 R8 全量混淆 —— 环信 SDK 引用了各厂商推送类（OPPO/vivo/小米/魅族），
+   未集成这些 SDK 时 R8 会报 Missing class；双人小应用无混淆需求。
+2) 给 main Manifest 补 INTERNET 权限 —— Flutter 模板只在 debug manifest 里有，
+   release 包不带它就连不上环信服务器。
+"""
+import os
+import sys
+
+root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# 1) 关闭混淆
+patched = False
+for rel in ('android/app/build.gradle.kts', 'android/app/build.gradle'):
+    path = os.path.join(root, rel)
+    if not os.path.exists(path):
+        continue
+    text = open(path, encoding='utf-8').read()
+    if 'isMinifyEnabled' in text or 'minifyEnabled' in text:
+        patched = True
+        break
+    # Kotlin DSL（Flutter 3.16+ 默认）
+    new = text.replace(
+        'release {',
+        'release {\n            isMinifyEnabled = false\n            isShrinkResources = false',
+        1,
+    )
+    if new == text:
+        # Groovy DSL（旧模板）
+        new = text.replace(
+            'release {',
+            'release {\n            minifyEnabled false\n            shrinkResources false',
+            1,
+        )
+    if new == text:
+        sys.exit('未找到 release 构建块：' + rel)
+    open(path, 'w', encoding='utf-8').write(new)
+    patched = True
+    break
+
+if not patched:
+    sys.exit('未找到 android/app/build.gradle(.kts)')
+
+# 2) 补 INTERNET 权限
+manifest = os.path.join(root, 'android/app/src/main/AndroidManifest.xml')
+if os.path.exists(manifest):
+    text = open(manifest, encoding='utf-8').read()
+    if 'android.permission.INTERNET' not in text:
+        text = text.replace(
+            '<application',
+            '<uses-permission android:name="android.permission.INTERNET" />\n    <application',
+            1,
+        )
+        open(manifest, 'w', encoding='utf-8').write(text)
