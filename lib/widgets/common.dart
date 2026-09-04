@@ -427,6 +427,52 @@ void shareCardToChat(BuildContext context, String kind, Map<String, dynamic> pay
   tipSnackBar(context, '已分享给 TA，去聊天看看吧 💬');
 }
 
+/// 模块页框架：顶部返回栏 + 内容区（首页「应用中心」push 的二级页面用）
+class ModuleScaffold extends StatelessWidget {
+  final String title;
+  final Widget child;
+  final Widget? floatingAction;
+
+  const ModuleScaffold({super.key, required this.title, required this.child, this.floatingAction});
+
+  @override
+  Widget build(BuildContext context) {
+    final pal = context.watch<AppStore>().palette;
+    return Scaffold(
+      backgroundColor: AppColors.bg,
+      floatingActionButton: floatingAction,
+      body: SafeArea(
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.fromLTRB(10, 8, 14, 8),
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      width: 36,
+                      height: 36,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), border: Border.all(color: AppColors.line)),
+                      child: const Icon(Icons.arrow_back_ios_new_rounded, size: 15, color: AppColors.ink),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: AppColors.ink)),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(child: child),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 /// 主题色圆点组（我的页用）
 class ThemeDots extends StatelessWidget {
   const ThemeDots({super.key});

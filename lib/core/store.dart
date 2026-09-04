@@ -10,6 +10,7 @@ import 'remote_chat_transport.dart';
 import 'seed.dart';
 import 'theme.dart';
 import 'util.dart';
+import 'words_data.dart';
 
 /// 全局状态与业务逻辑：本地优先，每次变更即时落盘（shared_preferences 单 JSON 快照）。
 class AppStore extends ChangeNotifier {
@@ -31,6 +32,21 @@ class AppStore extends ChangeNotifier {
   List<ChatMessage> messages = [];
   List<String> customMottos = [];
   Set<String> favoredQuotes = {};
+  // 扩展模块数据（V1.1）
+  List<HealthRecord> healthRecords = [];
+  List<WorkoutRecord> workouts = [];
+  Map<String, int> pomodoroLog = {}; // dateKey -> 完成专注数
+  Map<String, int> wordStatus = {}; // word -> 0 未学 / 1 学习中 / 2 已掌握
+  List<String> wordDoneToday = []; // 今日已学单词
+  String wordDoneDate = '';
+  List<WordItem> customWords = [];
+  List<FoodScan> foodScans = [];
+  Map<String, int> gameScores = {}; // 'match' / 'tetris' -> 最高分
+  List<MusicTrack> musicTracks = [];
+  // AI 识别配置（本机持久化；不进导出备份，避免密钥外泄）
+  String aiApiKey = '';
+  String aiBaseUrl = 'https://dashscope.aliyuncs.com/compatible-mode/v1';
+  String aiModel = 'qwen-vl-plus';
 
   // 每日格言：今日种子格言 + 手动换（每日限 3 次）
   String _quoteOverride = '';
@@ -93,6 +109,19 @@ class AppStore extends ChangeNotifier {
       chatMyId = j['chatMyId'] ?? '';
       chatMyPwd = j['chatMyPwd'] ?? '';
       chatPartnerId = j['chatPartnerId'] ?? '';
+      healthRecords = (j['healthRecords'] as List?)?.map((e) => HealthRecord.fromJson(e)).toList() ?? [];
+      workouts = (j['workouts'] as List?)?.map((e) => WorkoutRecord.fromJson(e)).toList() ?? [];
+      pomodoroLog = ((j['pomodoroLog'] ?? {}) as Map).map((k, v) => MapEntry(k.toString(), (v as num).toInt()));
+      wordStatus = ((j['wordStatus'] ?? {}) as Map).map((k, v) => MapEntry(k.toString(), (v as num).toInt()));
+      wordDoneToday = (j['wordDoneToday'] as List?)?.map((e) => e.toString()).toList() ?? [];
+      wordDoneDate = j['wordDoneDate'] ?? '';
+      customWords = (j['customWords'] as List?)?.map((e) => WordItem.fromJson(e)).toList() ?? [];
+      foodScans = (j['foodScans'] as List?)?.map((e) => FoodScan.fromJson(e)).toList() ?? [];
+      gameScores = ((j['gameScores'] ?? {}) as Map).map((k, v) => MapEntry(k.toString(), (v as num).toInt()));
+      musicTracks = (j['musicTracks'] as List?)?.map((e) => MusicTrack.fromJson(e)).toList() ?? [];
+      aiApiKey = j['aiApiKey'] ?? '';
+      aiBaseUrl = j['aiBaseUrl'] ?? 'https://dashscope.aliyuncs.com/compatible-mode/v1';
+      aiModel = j['aiModel'] ?? 'qwen-vl-plus';
     } catch (_) {
       _seedFirstRun();
     }
@@ -132,6 +161,19 @@ class AppStore extends ChangeNotifier {
       'chatMyId': chatMyId,
       'chatMyPwd': chatMyPwd,
       'chatPartnerId': chatPartnerId,
+      'healthRecords': healthRecords.map((e) => e.toJson()).toList(),
+      'workouts': workouts.map((e) => e.toJson()).toList(),
+      'pomodoroLog': pomodoroLog,
+      'wordStatus': wordStatus,
+      'wordDoneToday': wordDoneToday,
+      'wordDoneDate': wordDoneDate,
+      'customWords': customWords.map((e) => e.toJson()).toList(),
+      'foodScans': foodScans.map((e) => e.toJson()).toList(),
+      'gameScores': gameScores,
+      'musicTracks': musicTracks.map((e) => e.toJson()).toList(),
+      'aiApiKey': aiApiKey,
+      'aiBaseUrl': aiBaseUrl,
+      'aiModel': aiModel,
     };
     _prefs.setString(_storageKey, jsonEncode(j));
   }
@@ -760,6 +802,16 @@ class AppStore extends ChangeNotifier {
         'messages': messages.map((e) => e.toJson()).toList(),
         'customMottos': customMottos,
         'favoredQuotes': favoredQuotes.toList(),
+        'healthRecords': healthRecords.map((e) => e.toJson()).toList(),
+        'workouts': workouts.map((e) => e.toJson()).toList(),
+        'pomodoroLog': pomodoroLog,
+        'wordStatus': wordStatus,
+        'wordDoneToday': wordDoneToday,
+        'wordDoneDate': wordDoneDate,
+        'customWords': customWords.map((e) => e.toJson()).toList(),
+        'foodScans': foodScans.map((e) => e.toJson()).toList(),
+        'gameScores': gameScores,
+        'musicTracks': musicTracks.map((e) => e.toJson()).toList(),
       });
 
   /// 返回 null 表示成功，否则为错误提示
@@ -783,6 +835,16 @@ class AppStore extends ChangeNotifier {
       customMottos = (j['customMottos'] as List?)?.map((e) => e.toString()).toList() ?? [];
       favoredQuotes = (j['favoredQuotes'] as List?)?.map((e) => e.toString()).toSet() ?? {};
       _quoteOverride = j['quoteOverride'] ?? '';
+      healthRecords = (j['healthRecords'] as List?)?.map((e) => HealthRecord.fromJson(e)).toList() ?? [];
+      workouts = (j['workouts'] as List?)?.map((e) => WorkoutRecord.fromJson(e)).toList() ?? [];
+      pomodoroLog = ((j['pomodoroLog'] ?? {}) as Map).map((k, v) => MapEntry(k.toString(), (v as num).toInt()));
+      wordStatus = ((j['wordStatus'] ?? {}) as Map).map((k, v) => MapEntry(k.toString(), (v as num).toInt()));
+      wordDoneToday = (j['wordDoneToday'] as List?)?.map((e) => e.toString()).toList() ?? [];
+      wordDoneDate = j['wordDoneDate'] ?? '';
+      customWords = (j['customWords'] as List?)?.map((e) => WordItem.fromJson(e)).toList() ?? [];
+      foodScans = (j['foodScans'] as List?)?.map((e) => FoodScan.fromJson(e)).toList() ?? [];
+      gameScores = ((j['gameScores'] ?? {}) as Map).map((k, v) => MapEntry(k.toString(), (v as num).toInt()));
+      musicTracks = (j['musicTracks'] as List?)?.map((e) => MusicTrack.fromJson(e)).toList() ?? [];
       _changed();
       return null;
     } catch (_) {
@@ -805,6 +867,252 @@ class AppStore extends ChangeNotifier {
       checkinItems = [];
       checkinDone = {};
     }
+    if (modules.contains('health')) healthRecords = [];
+    if (modules.contains('workout')) workouts = [];
+    if (modules.contains('foodscan')) foodScans = [];
+    if (modules.contains('music')) musicTracks = [];
+    _changed();
+  }
+
+  // ---------------- 身高体重 ----------------
+
+  /// 按日期倒序
+  List<HealthRecord> get sortedHealthRecords {
+    final list = [...healthRecords];
+    list.sort((a, b) {
+      final c = b.date.compareTo(a.date);
+      if (c != 0) return c;
+      return b.createdAt.compareTo(a.createdAt);
+    });
+    return list;
+  }
+
+  double? get lastHeight {
+    for (final r in sortedHealthRecords) {
+      if (r.heightCm != null) return r.heightCm;
+    }
+    return null;
+  }
+
+  String? addHealthRecord(String date, double? heightCm, double weightKg) {
+    if (weightKg < 10 || weightKg > 300) return '体重写 10~300 之间哦';
+    if (heightCm != null && (heightCm < 80 || heightCm > 230)) return '身高写 80~230 之间哦';
+    final t = dateKey(today());
+    if (date.compareTo(t) > 0) return '日期不能选未来哦';
+    // 同一天重复记录则覆盖当天（保持列表清爽）
+    final idx = healthRecords.indexWhere((r) => r.date == date);
+    if (idx >= 0) {
+      healthRecords[idx].heightCm = heightCm;
+      healthRecords[idx].weightKg = weightKg;
+    } else {
+      healthRecords.add(HealthRecord(id: id(), date: date, heightCm: heightCm, weightKg: weightKg));
+    }
+    _changed();
+    return null;
+  }
+
+  void deleteHealthRecord(HealthRecord r) {
+    healthRecords.remove(r);
+    _changed();
+  }
+
+  // ---------------- 番茄钟 ----------------
+
+  int get pomodoroToday => pomodoroLog[dateKey(today())] ?? 0;
+
+  void addPomodoroDone() {
+    final key = dateKey(today());
+    pomodoroLog[key] = (pomodoroLog[key] ?? 0) + 1;
+    _changed();
+  }
+
+  // ---------------- 背单词 ----------------
+
+  List<WordItem> get allWords => [...builtInWords, ...customWords];
+
+  int get wordMasteredCount => wordStatus.values.where((s) => s >= 2).length;
+
+  int get wordTotalCount => allWords.length;
+
+  /// 今日待学单词：未掌握（状态<2）且今日没学过的，按内置在前、自定义在后
+  List<WordItem> get todaysWords {
+    final t = dateKey(today());
+    if (wordDoneDate != t) {
+      wordDoneDate = t;
+      wordDoneToday = [];
+    }
+    final done = wordDoneToday.toSet();
+    return allWords.where((w) => (wordStatus[w.word] ?? 0) < 2 && !done.contains(w.word)).toList();
+  }
+
+  void recordWord(WordItem w, bool known) {
+    final t = dateKey(today());
+    if (wordDoneDate != t) {
+      wordDoneDate = t;
+      wordDoneToday = [];
+    }
+    final cur = wordStatus[w.word] ?? 0;
+    wordStatus[w.word] = known ? (cur + 1).clamp(0, 2) : 0;
+    if (!wordDoneToday.contains(w.word)) wordDoneToday.add(w.word);
+    _changed();
+  }
+
+  String? addCustomWord(String word, String phonetic, String meaning) {
+    final w = word.trim();
+    if (w.isEmpty || meaning.trim().isEmpty) return '单词和释义都要填哦';
+    if (allWords.any((x) => x.word.toLowerCase() == w.toLowerCase())) return '这个词已经在词库里啦';
+    customWords.add(WordItem(w, phonetic.trim(), meaning.trim()));
+    _changed();
+    return null;
+  }
+
+  void deleteCustomWord(WordItem w) {
+    customWords.remove(w);
+    wordStatus.remove(w.word);
+    wordDoneToday.remove(w.word);
+    _changed();
+  }
+
+  // ---------------- 运动打卡 ----------------
+
+  List<WorkoutRecord> get sortedWorkouts {
+    final list = [...workouts];
+    list.sort((a, b) {
+      final c = b.date.compareTo(a.date);
+      if (c != 0) return c;
+      return b.createdAt.compareTo(a.createdAt);
+    });
+    return list;
+  }
+
+  bool hasWorkoutOn(DateTime d) => workouts.any((w) => w.date == dateKey(d));
+
+  /// 连续运动打卡的自然日天数
+  int get workoutStreak {
+    var s = 0;
+    var d = today();
+    if (!hasWorkoutOn(d)) d = addDays(d, -1);
+    while (hasWorkoutOn(d)) {
+      s++;
+      d = addDays(d, -1);
+    }
+    return s;
+  }
+
+  int workoutMinutesInMonth(DateTime month) {
+    var sum = 0;
+    for (final w in workouts) {
+      final d = parseDate(w.date);
+      if (d.year == month.year && d.month == month.month) sum += w.minutes;
+    }
+    return sum;
+  }
+
+  double workoutCaloriesInMonth(DateTime month) {
+    var sum = 0.0;
+    for (final w in workouts) {
+      final d = parseDate(w.date);
+      if (d.year == month.year && d.month == month.month) sum += w.calories;
+    }
+    return sum;
+  }
+
+  int workoutDaysInMonth(DateTime month) {
+    final days = <String>{};
+    for (final w in workouts) {
+      final d = parseDate(w.date);
+      if (d.year == month.year && d.month == month.month) days.add(w.date);
+    }
+    return days.length;
+  }
+
+  /// 估算千卡 = MET × 体重(kg) × 小时
+  double estimateCalories(String typeKey, int minutes, double? weightKg) {
+    final w = weightKg ?? 60;
+    return double.parse((workoutTypeOf(typeKey).met * w * (minutes / 60)).toStringAsFixed(0));
+  }
+
+  String? addWorkout(String date, String typeKey, int minutes, String note, {double? weightKg}) {
+    if (minutes < 1 || minutes > 600) return '时长写 1~600 分钟哦';
+    final t = dateKey(today());
+    if (date.compareTo(t) > 0) return '日期不能选未来哦';
+    final cal = estimateCalories(typeKey, minutes, weightKg ?? lastHeightWeight);
+    workouts.add(WorkoutRecord(
+      id: id(),
+      date: date,
+      typeKey: typeKey,
+      minutes: minutes,
+      calories: cal,
+      note: note.trim(),
+    ));
+    _changed();
+    return null;
+  }
+
+  double get lastHeightWeight {
+    for (final r in sortedHealthRecords) {
+      return r.weightKg;
+    }
+    return 60;
+  }
+
+  void deleteWorkout(WorkoutRecord w) {
+    workouts.remove(w);
+    _changed();
+  }
+
+  // ---------------- 食物识别 ----------------
+
+  List<FoodScan> get sortedFoodScans {
+    final list = [...foodScans];
+    list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    return list;
+  }
+
+  void addFoodScan(String name, int calories, String note) {
+    foodScans.add(FoodScan(
+      id: id(),
+      date: dateKey(today()),
+      name: name,
+      calories: calories,
+      note: note,
+    ));
+    _changed();
+  }
+
+  void deleteFoodScan(FoodScan f) {
+    foodScans.remove(f);
+    _changed();
+  }
+
+  void setAiConfig({required String apiKey, required String baseUrl, required String model}) {
+    aiApiKey = apiKey.trim();
+    aiBaseUrl = baseUrl.trim().isEmpty ? 'https://dashscope.aliyuncs.com/compatible-mode/v1' : baseUrl.trim();
+    aiModel = model.trim().isEmpty ? 'qwen-vl-plus' : model.trim();
+    _changed();
+  }
+
+  // ---------------- 小游戏 ----------------
+
+  int gameBest(String key) => gameScores[key] ?? 0;
+
+  void setGameScore(String key, int score) {
+    if (score > (gameScores[key] ?? 0)) {
+      gameScores[key] = score;
+      _changed();
+    }
+  }
+
+  // ---------------- 音乐 ----------------
+
+  void addMusicTrack(String title, String path) {
+    if (musicTracks.any((t) => t.path == path)) return;
+    musicTracks.add(MusicTrack(id: id(), title: title, path: path));
+    _changed();
+  }
+
+  void removeMusicTrack(MusicTrack t) {
+    musicTracks.remove(t);
     _changed();
   }
 

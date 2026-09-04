@@ -12,6 +12,10 @@ dependencies:
   provider: ^6.1.2
   shared_preferences: ^2.2.3
   im_flutter_sdk: ^4.22.0 # 环信 IM：聊天模块真实互通（仅 Android / iOS）
+  image_picker: ^1.1.2 # 识热量：拍照/相册
+  http: ^1.2.2 # 识热量：AI 接口请求
+  audioplayers: ^6.1.0 # 音乐播放器
+  file_picker: ^8.1.2 # 音乐导入：选择本地音频
 
 dev_dependencies:
   flutter_test:

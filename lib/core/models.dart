@@ -436,3 +436,184 @@ class Quote {
   final String en;
   const Quote(this.zh, this.en);
 }
+
+// ---------------- 身高体重 ----------------
+
+class HealthRecord {
+  final String id;
+  String date; // 'yyyy-MM-dd'
+  double? heightCm; // 80 - 230，可空（只记体重）
+  double weightKg; // 10 - 300
+  final DateTime createdAt;
+
+  HealthRecord({
+    required this.id,
+    required this.date,
+    this.heightCm,
+    required this.weightKg,
+    DateTime? createdAt,
+  }) : createdAt = createdAt ?? DateTime.now();
+
+  double? get bmi {
+    final h = heightCm;
+    if (h == null || h <= 0) return null;
+    return double.parse((weightKg / ((h / 100) * (h / 100))).toStringAsFixed(1));
+  }
+
+  factory HealthRecord.fromJson(Map<String, dynamic> j) => HealthRecord(
+        id: j['id'],
+        date: j['date'],
+        heightCm: j['heightCm'] != null ? (j['heightCm'] as num).toDouble() : null,
+        weightKg: (j['weightKg'] as num).toDouble(),
+        createdAt: DateTime.tryParse(j['createdAt'].toString()) ?? DateTime.now(),
+      );
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'date': date,
+        'heightCm': heightCm,
+        'weightKg': weightKg,
+        'createdAt': createdAt.toIso8601String(),
+      };
+}
+
+// ---------------- 运动打卡 ----------------
+
+class WorkoutType {
+  final String key;
+  final String name;
+  final String emoji;
+  final double met; // 代谢当量，用于估算千卡
+  const WorkoutType(this.key, this.name, this.emoji, this.met);
+}
+
+const workoutTypes = <WorkoutType>[
+  WorkoutType('run', '跑步', '🏃', 8.0),
+  WorkoutType('walk', '快走', '🚶', 4.3),
+  WorkoutType('jump', '跳绳', '🤸', 11.0),
+  WorkoutType('cycle', '骑行', '🚴', 6.8),
+  WorkoutType('swim', '游泳', '🏊', 6.0),
+  WorkoutType('yoga', '瑜伽', '🧘', 2.5),
+  WorkoutType('strength', '力量训练', '🏋️', 5.0),
+  WorkoutType('badminton', '羽毛球', '🏸', 5.5),
+  WorkoutType('basketball', '篮球', '🏀', 6.5),
+  WorkoutType('hike', '徒步', '🥾', 5.3),
+  WorkoutType('other', '其他', '✨', 4.0),
+];
+
+WorkoutType workoutTypeOf(String key) =>
+    workoutTypes.firstWhere((t) => t.key == key, orElse: () => workoutTypes.last);
+
+class WorkoutRecord {
+  final String id;
+  String date; // 'yyyy-MM-dd'
+  String typeKey;
+  int minutes; // 1 - 600
+  double calories; // 估算千卡
+  String note; // 0-30 字
+  final DateTime createdAt;
+
+  WorkoutRecord({
+    required this.id,
+    required this.date,
+    required this.typeKey,
+    required this.minutes,
+    required this.calories,
+    this.note = '',
+    DateTime? createdAt,
+  }) : createdAt = createdAt ?? DateTime.now();
+
+  factory WorkoutRecord.fromJson(Map<String, dynamic> j) => WorkoutRecord(
+        id: j['id'],
+        date: j['date'],
+        typeKey: j['typeKey'] ?? 'other',
+        minutes: (j['minutes'] ?? 0) as int,
+        calories: (j['calories'] ?? 0).toDouble(),
+        note: j['note'] ?? '',
+        createdAt: DateTime.tryParse(j['createdAt'].toString()) ?? DateTime.now(),
+      );
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'date': date,
+        'typeKey': typeKey,
+        'minutes': minutes,
+        'calories': calories,
+        'note': note,
+        'createdAt': createdAt.toIso8601String(),
+      };
+}
+
+// ---------------- 背单词 ----------------
+
+class WordItem {
+  final String word;
+  String phonetic;
+  String meaning;
+
+  WordItem(this.word, this.phonetic, this.meaning);
+
+  factory WordItem.fromJson(Map<String, dynamic> j) =>
+      WordItem(j['word'] ?? '', j['phonetic'] ?? '', j['meaning'] ?? '');
+
+  Map<String, dynamic> toJson() => {'word': word, 'phonetic': phonetic, 'meaning': meaning};
+}
+
+// ---------------- 食物识别 ----------------
+
+class FoodScan {
+  final String id;
+  String date; // 'yyyy-MM-dd'
+  String name; // 识别出的食物名
+  int calories; // 估算千卡
+  String note; // 份量说明等
+  final DateTime createdAt;
+
+  FoodScan({
+    required this.id,
+    required this.date,
+    required this.name,
+    required this.calories,
+    this.note = '',
+    DateTime? createdAt,
+  }) : createdAt = createdAt ?? DateTime.now();
+
+  factory FoodScan.fromJson(Map<String, dynamic> j) => FoodScan(
+        id: j['id'],
+        date: j['date'],
+        name: j['name'] ?? '',
+        calories: (j['calories'] ?? 0) as int,
+        note: j['note'] ?? '',
+        createdAt: DateTime.tryParse(j['createdAt'].toString()) ?? DateTime.now(),
+      );
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'date': date,
+        'name': name,
+        'calories': calories,
+        'note': note,
+        'createdAt': createdAt.toIso8601String(),
+      };
+}
+
+// ---------------- 音乐 ----------------
+
+class MusicTrack {
+  final String id;
+  String title;
+  String path; // 本地文件路径
+  final DateTime createdAt;
+
+  MusicTrack({required this.id, required this.title, required this.path, DateTime? createdAt})
+      : createdAt = createdAt ?? DateTime.now();
+
+  factory MusicTrack.fromJson(Map<String, dynamic> j) => MusicTrack(
+        id: j['id'],
+        title: j['title'] ?? '未知曲目',
+        path: j['path'] ?? '',
+        createdAt: DateTime.tryParse(j['createdAt'].toString()) ?? DateTime.now(),
+      );
+
+  Map<String, dynamic> toJson() => {'id': id, 'title': title, 'path': path, 'createdAt': createdAt.toIso8601String()};
+}

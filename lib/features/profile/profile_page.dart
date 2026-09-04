@@ -737,7 +737,7 @@ class DataPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const CardTitle('📋 导出备份'),
-                const Text('完整备份（资料、待办、账单、课表、倒数日、食谱、聊天、收藏）会以 JSON 文本复制到剪贴板，粘贴保存到备忘录或发给自己的小号即可。',
+                const Text('完整备份（资料、待办、账单、课表、倒数日、食谱、聊天、收藏，以及身高体重、运动、番茄钟、单词、识热量、游戏最高分、音乐歌单）会以 JSON 文本复制到剪贴板，粘贴保存到备忘录或发给自己的小号即可。聊天账号与 AI 识别密钥不会导出。',
                     style: TextStyle(fontSize: 11.5, color: AppColors.sub, height: 1.6)),
                 const SizedBox(height: 12),
                 Center(
@@ -842,6 +842,10 @@ class _ClearCardState extends State<_ClearCard> {
     ('recipe', '食谱'),
     ('chat', '聊天记录'),
     ('checkin', '打卡项与记录'),
+    ('health', '身高体重'),
+    ('workout', '运动记录'),
+    ('foodscan', '识别记录'),
+    ('music', '音乐歌单'),
   ];
 
   @override

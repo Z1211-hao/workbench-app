@@ -8,6 +8,23 @@ import '../../core/store.dart';
 import '../../core/theme.dart';
 import '../../core/util.dart';
 import '../../widgets/common.dart';
+import '../games/games_page.dart';
+import '../health/health_page.dart';
+import '../music/music_page.dart';
+import '../pomodoro/pomodoro_page.dart';
+import '../recipe/food_scan_page.dart';
+import '../words/words_page.dart';
+import '../workout/workout_page.dart';
+
+final _appEntries = <(String, String, Widget)>[
+  ('📏', '身高体重', const HealthPage()),
+  ('🍅', '番茄钟', const PomodoroPage()),
+  ('📖', '背单词', const WordsPage()),
+  ('💪', '运动打卡', const WorkoutPage()),
+  ('🍽️', '识热量', const FoodScanPage()),
+  ('🎮', '小游戏', const GamesPage()),
+  ('🎵', '音乐', const MusicPage()),
+];
 
 /// 桌面仪表盘（PRD 3.2）
 class HomePage extends StatefulWidget {
@@ -88,8 +105,64 @@ class _HomePageState extends State<HomePage> {
 
             // 今日概览卡
             const _OverviewCard(),
+
+            // 应用中心
+            const SizedBox(height: 12),
+            SectionCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const CardTitle('🧰 应用中心'),
+                  GridView.count(
+                    crossAxisCount: 4,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    mainAxisSpacing: 6,
+                    crossAxisSpacing: 6,
+                    childAspectRatio: 0.95,
+                    children: [
+                      for (final e in _appEntries) _AppTile(emoji: e.$1, label: e.$2, page: e.$3),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _AppTile extends StatelessWidget {
+  final String emoji;
+  final String label;
+  final Widget page;
+
+  const _AppTile({required this.emoji, required this.label, required this.page});
+
+  @override
+  Widget build(BuildContext context) {
+    final pal = context.watch<AppStore>().palette;
+    return GestureDetector(
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => page)),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 46,
+            height: 46,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [pal.softBg, Colors.white]),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: pal.softBorder),
+            ),
+            child: Text(emoji, style: const TextStyle(fontSize: 21)),
+          ),
+          const SizedBox(height: 5),
+          Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 9.5, color: AppColors.sub, fontWeight: FontWeight.w600)),
+        ],
       ),
     );
   }
