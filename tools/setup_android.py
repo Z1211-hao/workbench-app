@@ -3,6 +3,8 @@
    未集成这些 SDK 时 R8 会报 Missing class；双人小应用无混淆需求。
 2) 给 main Manifest 补 INTERNET / CAMERA 权限 —— Flutter 模板只在 debug manifest 里有，
    release 包不带它就连不上环信服务器（INTERNET）、无法拍照识热量（CAMERA）。
+3) 固定 minSdk = 23 —— audioplayers 6.x 的安卓端要求 minSdk >= 23，
+   Flutter 模板默认 21/24 可能触发 Manifest merger 失败。
 """
 import os
 import sys
@@ -57,3 +59,16 @@ if os.path.exists(manifest):
             1,
         )
         open(manifest, 'w', encoding='utf-8').write(text)
+
+# 3) 固定 minSdk = 23（Kotlin DSL 与 Groovy DSL 双兼容）
+for rel, repl in (
+    ('android/app/build.gradle.kts', 'minSdk = flutter.minSdkVersion'),
+    ('android/app/build.gradle', 'minSdkVersion flutter.minSdkVersion'),
+):
+    path = os.path.join(root, rel)
+    if not os.path.exists(path):
+        continue
+    text = open(path, encoding='utf-8').read()
+    if repl in text:
+        open(path, 'w', encoding='utf-8').write(text.replace(repl, 'minSdk = 23', 1) if rel.endswith('.kts') else text.replace(repl, 'minSdkVersion 23', 1))
+        break

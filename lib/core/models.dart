@@ -551,7 +551,7 @@ class WordItem {
   String phonetic;
   String meaning;
 
-  WordItem(this.word, this.phonetic, this.meaning);
+  const WordItem(this.word, this.phonetic, this.meaning);
 
   factory WordItem.fromJson(Map<String, dynamic> j) =>
       WordItem(j['word'] ?? '', j['phonetic'] ?? '', j['meaning'] ?? '');
